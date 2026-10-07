@@ -1,7 +1,7 @@
 {
   "okf_catalog": 1,
-  "commit": "cc503469f7da7afedcec2a03775c7e995d1422ec",
-  "published_at": "2026-10-07T18:24:09Z",
+  "commit": "406ca65efcc481a796e37db4f97168105846539e",
+  "published_at": "2026-10-07T18:26:40Z",
   "files": {
     "guides/index.md": {
       "sha256": "f87050267f0173c44648ec2ba76e46a9586a8a1f6bcbb1a531d724492dba3469",
@@ -24,12 +24,16 @@
       "bytes": 139
     },
     "terms/index.md": {
-      "sha256": "50fa8b7ae0471e5122ddad538dc089d5ce22beae7a5a3477a957f1a6f204a766",
-      "bytes": 129
+      "sha256": "58750b2f00d22f88563ff8b4d7fc35ced00b12c1572d3f2f98828818455357ba",
+      "bytes": 233
     },
     "terms/par-bake.md": {
       "sha256": "22f2896eeb9f34b4a5c54a2409b276d5b2c6a96d15abb59169cc09740d8a0361",
       "bytes": 734
+    },
+    "terms/proofing-window.md": {
+      "sha256": "40a28b0ffaeb17e47672b5ee61189e8072973eb0622bf5726add27e669d07dfa",
+      "bytes": 827
     }
   }
 }
