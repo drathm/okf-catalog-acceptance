@@ -1,0 +1,35 @@
+{
+  "okf_catalog": 1,
+  "commit": "cc503469f7da7afedcec2a03775c7e995d1422ec",
+  "published_at": "2026-10-07T18:24:09Z",
+  "files": {
+    "guides/index.md": {
+      "sha256": "f87050267f0173c44648ec2ba76e46a9586a8a1f6bcbb1a531d724492dba3469",
+      "bytes": 142
+    },
+    "guides/opening-checklist.md": {
+      "sha256": "4b2b5071658010d2935777a96272d6cdbead70cc115060e3c46c3497f5b61912",
+      "bytes": 906
+    },
+    "index.md": {
+      "sha256": "dca4a773a9a80f262ce23116fa315ce61485cedc1e00fd07373d4ddf4382c00e",
+      "bytes": 80
+    },
+    "references/deck-oven-manual.md": {
+      "sha256": "33b989619b0c38b971e5bd17ca345ee773d68da72e8ca0e461901d3aaa35be71",
+      "bytes": 587
+    },
+    "references/index.md": {
+      "sha256": "7d1dd9813042372eef03f571183016aea8d35b03ce0317643767e3658463080e",
+      "bytes": 139
+    },
+    "terms/index.md": {
+      "sha256": "50fa8b7ae0471e5122ddad538dc089d5ce22beae7a5a3477a957f1a6f204a766",
+      "bytes": 129
+    },
+    "terms/par-bake.md": {
+      "sha256": "22f2896eeb9f34b4a5c54a2409b276d5b2c6a96d15abb59169cc09740d8a0361",
+      "bytes": 734
+    }
+  }
+}
