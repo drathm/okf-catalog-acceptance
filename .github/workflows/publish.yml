@@ -24,7 +24,7 @@ env:
   OKF_SCHEMA: "1"
   # The server package from npm, at the exact version this file came from. Every published version carries a
   # provenance statement that ties it to its source commit and its build (`npm audit signatures` verifies it).
-  OKF_CATALOG_SOURCE: "github:drathm/okf-catalog#22a3380152483a1be16e7519ab37d710bd8842d7"
+  OKF_CATALOG_SOURCE: "https://github.com/drathm/okf-catalog-acceptance/releases/download/fixture-tarball-22a3380/okf-catalog-0.1.2.tgz"
 
 jobs:
   build:
