@@ -1,0 +1,89 @@
+# Copy this file into the repository that holds the company's bundle, as .github/workflows/publish.yml, and set the
+# values under `env`. It runs on a push to the source branch, never on the published branch; a read-only job
+# checks and packs, and a second job with the write token runs git alone. See README.md beside this file.
+name: publish knowledge bundle
+
+on:
+  push:
+    branches:
+      - main # the source branch; never the published branch
+
+permissions: {}
+
+concurrency:
+  group: okf-catalog-publish
+  cancel-in-progress: false
+
+env:
+  BUNDLE_PATH: kb
+  CONFIG_PATH: okf-catalog.yaml
+  PUBLISHED_BRANCH: published
+  # The checkers are your gates: okflint needs its own manifest file (unset leaves it out); OKF_SCHEMA is 1, or
+  # strict to fail on warnings, or empty to leave okf-schema out.
+  OKFLINT_MANIFEST: okf-base.yaml
+  OKF_SCHEMA: "1"
+  # The server package from npm, at the exact version this file came from. Every published version carries a
+  # provenance statement that ties it to its source commit and its build (`npm audit signatures` verifies it).
+  OKF_CATALOG_SOURCE: "github:drathm/okf-catalog#22a3380152483a1be16e7519ab37d710bd8842d7"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      commit: ${{ steps.pack.outputs.commit }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: "0.12.23"
+      - name: install the server package from its pinned source, then the checkers from its lock
+        run: |
+          # The server package carries the built code, the recipe's scripts and the hash-pinned checker lock; this
+          # file is the only thing a company copies. Nothing compiles on the runner.
+          NODE_LLAMA_CPP_SKIP_DOWNLOAD=1 npm install --global "$OKF_CATALOG_SOURCE"
+          RECIPE="$(npm root -g)/okf-catalog/recipes/publish"
+          echo "RECIPE=$RECIPE" >> "$GITHUB_ENV"
+          uv venv --python 3.12 "$RUNNER_TEMP/checkers"
+          uv pip install --python "$RUNNER_TEMP/checkers/bin/python" --require-hashes -r "$RECIPE/checkers.lock"
+          echo "$RUNNER_TEMP/checkers/bin" >> "$GITHUB_PATH"
+      - name: check, pack, check
+        id: pack
+        run: |
+          commit=$(sh "$RECIPE/pack.sh" --config "$CONFIG_PATH" --source "$BUNDLE_PATH" --out "$RUNNER_TEMP/bundle" --commit "$GITHUB_SHA")
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+          # One archive, so file names the artifact store would refuse (quotes, colons, stars) travel untouched;
+          # push.sh rides along, so the publish job installs nothing and runs git alone.
+          cp "$RECIPE/push.sh" "$RUNNER_TEMP/push.sh"
+          tar -C "$RUNNER_TEMP" -cf "$RUNNER_TEMP/bundle.tar" bundle push.sh
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: bundle
+          path: ${{ runner.temp }}/bundle.tar
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: bundle
+          path: ${{ runner.temp }}
+      - name: commit the bundle onto the published branch and push
+        env:
+          SOURCE_COMMIT: ${{ needs.build.outputs.commit }}
+        run: |
+          tar -C "$RUNNER_TEMP" -xf "$RUNNER_TEMP/bundle.tar"
+          sh "$RUNNER_TEMP/push.sh" --repo "$GITHUB_WORKSPACE" --bundle "$RUNNER_TEMP/bundle" --commit "$SOURCE_COMMIT" --branch "$PUBLISHED_BRANCH"

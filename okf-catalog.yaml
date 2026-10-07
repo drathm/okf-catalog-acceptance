@@ -1,0 +1,5 @@
+# The packing configuration the publish recipe reads: the company, the bundle folder and the declared types.
+company: tidewater
+source:
+  local: ./kb
+types: [Term, Guide, Reference]

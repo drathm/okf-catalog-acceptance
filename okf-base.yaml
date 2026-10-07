@@ -1,0 +1,23 @@
+# okflint 0.5.0 manifest for this bundle: the OKF 0.2 core rules plus one profile rule, that every page carries one of
+# the three declared types with its exact spelling.
+okf_version: "0.2"
+
+base:
+  name: tidewater
+  roots:
+    - path: kb
+  reserved_files:
+    index: index.md
+    log: log.md
+
+profile:
+  types:
+    Term:
+      required: [type]
+      type_values: [Term]
+    Guide:
+      required: [type]
+      type_values: [Guide]
+    Reference:
+      required: [type]
+      type_values: [Reference]
